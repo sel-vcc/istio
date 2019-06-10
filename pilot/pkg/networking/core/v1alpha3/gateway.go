@@ -27,6 +27,7 @@ import (
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/listener"
 	"github.com/envoyproxy/go-control-plane/envoy/api/v2/route"
 	http_conn "github.com/envoyproxy/go-control-plane/envoy/config/filter/network/http_connection_manager/v2"
+	"github.com/gogo/protobuf/types"
 	multierror "github.com/hashicorp/go-multierror"
 
 	networking "istio.io/api/networking/v1alpha3"
@@ -340,6 +341,9 @@ func (configgen *ConfigGeneratorImpl) createGatewayHTTPFilterChainOpts(
 				useRemoteAddress: true,
 				direction:        http_conn.EGRESS, // viewed as from gateway to internal
 				connectionManager: &http_conn.HttpConnectionManager{
+					HttpProtocolOptions: &core.Http1ProtocolOptions{
+						AllowAbsoluteUrl: &types.BoolValue{Value: true},
+					},
 					// Forward client cert if connection is mTLS
 					ForwardClientCertDetails: http_conn.SANITIZE_SET,
 					SetCurrentClientCertDetails: &http_conn.HttpConnectionManager_SetCurrentClientCertDetails{
@@ -373,6 +377,9 @@ func (configgen *ConfigGeneratorImpl) createGatewayHTTPFilterChainOpts(
 			useRemoteAddress: true,
 			direction:        http_conn.EGRESS, // viewed as from gateway to internal
 			connectionManager: &http_conn.HttpConnectionManager{
+				HttpProtocolOptions: &core.Http1ProtocolOptions{
+					AllowAbsoluteUrl: &types.BoolValue{Value: true},
+				},
 				// Forward client cert if connection is mTLS
 				ForwardClientCertDetails: http_conn.SANITIZE_SET,
 				SetCurrentClientCertDetails: &http_conn.HttpConnectionManager_SetCurrentClientCertDetails{
